@@ -6,72 +6,67 @@
     <title>Document</title>
 </head>
 <body>
+    <input type="button" value="rock"></input>
+    <input type="button" value="paper"></input>
+    <input type="button" value="scissors"></input>
+    <div id="result"></div>
     <script>
-        let humanScore = 0
+        let playerScore = 0
         let computerScore = 0
-
-        function getComputerChoice() {
-            n = Math.floor((Math.random() * 10)) % 3;
-            if (n == 0)return "rock"
-            else if (n == 1) return "scissors"
-            else return "paper"
-        }
-
-        function getHumanChoice(str) {
-            if (str.toLowerCase() == "rock") return "rock";
-            else if (str.toLowerCase() == "scissors") return "scissors";
-            else return "paper"
-        }
-
-        function playRound(humanChoice, computerChoice){
-            if (humanChoice == "rock"){
-                if (computerChoice == "scissors"){
-                    console.log("You won this one!")
-                    humanScore++
-                } else{
-                    console.log("You lost this one.")
-                    computerScore++
-                }
-            }
-            if (humanChoice == "scissors"){
-                if (computerChoice == "paper"){
-                    console.log("You won this one!")
-                    humanScore++
-                } else{
-                    console.log("You lost this one.")
-                    computerScore++
-                }
-            }
-            if (humanChoice == "paper"){
-                if (computerChoice == "rock"){
-                    console.log("You won this one!")
-                    humanScore++
-                } else{
-                    console.log("You lost this one.")
-                    computerScore++
-                }
-            }
+        const buttons = document.querySelectorAll('input')
+        
+        function computerPlay() {
+            let choices = ['rock', 'paper', 'scissors']
+            return choices[Math.floor(Math.random() * choices.length)]
         }
         
-        function playGame(){
-            for (i = 0; i < 5; i++){
-                let humanSelection = "";
-                let computerSelection = "";
-                do{
-                    let answer = prompt("Rock Paper Scissors?: ");
-                    humanSelection = getHumanChoice(answer);
-                    computerSelection = getComputerChoice();
-                } while (humanSelection == computerSelection);
-
-                playRound(humanSelection, computerSelection);
-            }
-            if (humanScore > computerScore){
-                console.log("You won! Congratulations!")
-            } else if (humanScore < computerScore){
-                console.log("You lost. Maybe next time!")
-            }
+        function disableButtons() {
+            buttons.forEach(elem => {
+                elem.disabled = true
+            })
         }
-        playGame();
+    
+        function playRound(playerSelection) {
+            let computerSelection = computerPlay()
+            let result = ""
+        
+            if ((playerSelection == 'rock' && computerSelection == 'scissors') ||
+                (playerSelection == 'scissors' && computerSelection == 'paper') ||
+                (playerSelection == 'paper' && computerSelection == 'rock')) {
+                
+                playerScore += 1
+                result = ('You win! ' + playerSelection + ' beats ' + computerSelection
+                    + "<br><br>Player score: " + playerScore + "<br>Computer score: " + computerScore)
+        
+            if (playerScore == 5) {
+                result += '<br><br>You won the game! Reload the page to play again'
+                disableButtons()
+            }
+            }
+            else if (playerSelection == computerSelection) {
+                result = ('It\'s a tie. You both chose ' + playerSelection
+                    + "<br><br>Player score: " + playerScore + "<br>Computer score: " + computerScore)
+            }
+            else {
+                computerScore += 1
+                result = ('You lose! ' + computerSelection + ' beats ' + playerSelection
+                    + "<br><br>Player score: " + playerScore + "<br>Computer score: " + computerScore)
+        
+                if (computerScore == 5) {
+                    result += '<br><br>I won the game! Reload the page to play again'
+                    disableButtons()
+                }
+            }
+        
+            document.getElementById('result').innerHTML = result
+            return
+        }
+    
+        buttons.forEach(button =>{
+            button.addEventListener('click', function(){
+                playRound(button.value)
+            })
+        })
     </script>
 </body>
 </html>
